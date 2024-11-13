@@ -25,7 +25,8 @@
 8. [Evaluation](#evaluation) 
 9. [Conclusion](#conclusion)
 10. [Recommendations](#recommendations)
-11. .[Possible next steps](#possible-next-steps)  
+11. .[Possible next steps](#possible-next-steps)
+12. .[Resources](#resources)
 
 ## Overview
 The AlzAware Project seeks to harness the power of predictive modeling to identify early signs of Alzheimer’s Disease (AD) and Alzheimer’s Disease-Related Dementias (AD/ADRD) by analyzing social determinants of health. Using data from the Mexican Health and Aging Study (MHAS), this initiative investigates how factors like socioeconomic status, education, and access to healthcare influence cognitive decline. The project aspires to empower early interventions, reduce health disparities, and improve care accessibility for underserved populations.
@@ -169,6 +170,13 @@ The analysis reveals a positive correlation between education level and composit
 ## Recommendations
 
 ## Possible next steps
+
+## Resources
+1: For the complete analysis, here is the [Notebook](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/blob/main/Main.ipynb)
+
+2: The presentation slides are in this [Link](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/blob/main/Main.ipynb)
+
+3: The link to the [data report](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/tree/main/Data)
 
 
 
