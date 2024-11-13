@@ -1,45 +1,26 @@
 import streamlit as st
 import pandas as pd
-from modules.data_loader import load_and_merge_data
-from modules.data_preprocessing import apply_mappings, reshape_data, split_features_labels
-from modules.model_training import create_preprocessing_pipeline, train_model
-from modules.model_evaluation import evaluate_model
-from modules.hyperparameter_tuning import perform_grid_search
+import pickle
+from modules.data_preprocessing import load_and_merge_data, apply_mappings, transform_data, preprocess_data
+from modules.training import create_pipeline, evaluate_model
 
-st.markdown(
-    """
-    <style>
-        .reportview-container .main .block-container{
-            max-width: 90%;
-            padding-top: 5rem;
-            padding-right: 5rem;
-            padding-left: 5rem;
-            padding-bottom: 5rem;
-        }
-        img{
-            max-width:40%;
-            margin-bottom:40px;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# Load trained model
+model_path = 'models/best_ridge_model.pkl'
+with open(model_path, 'rb') as file:
+    model = pickle.load(file)
 
-header_container = st.container()
-processing_container = st.container()
+# User input via file upload
+uploaded_file = st.file_uploader("Upload your data file (CSV)")
 
-with header_container:
-   
-    # Different levels of text you can include in your app
-    st.title("DementiaShield – Predicting Alzheimer’s with Social Insights")
-    st.header("Welcome!")
-    st.subheader("This is a great app")
-    st.write("The AlzAware project aims to develop a predictive model for early identification of Alzheimer’s Disease (AD) and Alzheimer’s Disease-Related Dementias (AD/ADRD) based on social determinants of health. Utilizing data from the Mexican Health and Aging Study (MHAS), this project focuses on uncovering associations between social, economic, and environmental factors and cognitive decline risk. The ultimate goal is to enable early intervention and improved access to care, especially for underrepresented populations.")
+if uploaded_file is not None:
+    user_data = pd.read_csv(uploaded_file)
 
-file = st.file_uploader('Upload a file (.txt)')
+    # Preprocess user input
+    preprocessor = preprocess_data(user_data)
+    pipeline = create_pipeline(preprocessor)
 
-# Another container
-with processing_container:
-    # Import dataset
-    train_data = pd.read_csv('Original data/train_features.csv')
-    train_labels = pd.read_csv('Original data/train_labels.csv')
+    # Transform data and make predictions
+    user_input_transformed = preprocessor.transform(user_data)
+    predictions = model.predict(user_input_transformed)
+
+    st.write("Predictions:", predictions)
