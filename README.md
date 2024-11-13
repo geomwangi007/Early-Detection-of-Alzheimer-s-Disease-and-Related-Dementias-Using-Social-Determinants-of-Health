@@ -17,16 +17,15 @@
 2. [Problem Statement](#problem-statement)
 3. [Main Objective](#main-objective)
 4. [Specific Objectives](#specific-objectives)
-5. [Data Understanding](#data-understanding) 
-6. - [Data Sources](*data-sources)
+5. [Data Understanding](#data-understanding)
+   - [Data Sources](*data-sources)
    - [Data Overview](*data-overview)
-7. [Data Preparation](#data-preparation)
-   
-8. [Modelling](#modelling)
-9. [Evaluation](#evaluation)
-10. [Conclusion](#conclusion)
-11.  [Recommendations](#recommendations)
-12.  .[Possible next steps](#possible-next-steps)  
+6. [Data Preparation](#data-preparation)
+7. [Modelling](#modelling)
+8. [Evaluation](#evaluation) 
+9. [Conclusion](#conclusion)
+10. [Recommendations](#recommendations)
+11. .[Possible next steps](#possible-next-steps)  
 
 ## Overview
 The AlzAware Project seeks to harness the power of predictive modeling to identify early signs of Alzheimer’s Disease (AD) and Alzheimer’s Disease-Related Dementias (AD/ADRD) by analyzing social determinants of health. Using data from the Mexican Health and Aging Study (MHAS), this initiative investigates how factors like socioeconomic status, education, and access to healthcare influence cognitive decline. The project aspires to empower early interventions, reduce health disparities, and improve care accessibility for underserved populations.
