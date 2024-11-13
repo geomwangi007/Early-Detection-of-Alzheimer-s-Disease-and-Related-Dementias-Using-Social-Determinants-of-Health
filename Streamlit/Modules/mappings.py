@@ -231,24 +231,7 @@ def apply_mappings(df):
     }
 
     
+ def apply_mappings(df):
     for column, mapping in mappings.items():
         df[column] = df[column].map(mapping)
     return df
-
-def reshape_data(df):
-    stubnames = [col.rsplit('_', 1)[0] for col in df.columns if col.endswith('_03') or col.endswith('_12')]
-    stubnames = list(set(stubnames))
-    data_long = pd.wide_to_long(
-        df,
-        stubnames=stubnames,
-        i=['uid', 'year', 'composite_score'],
-        j='time',
-        sep='_',
-        suffix='\\d+'
-    ).reset_index()
-    return data_long
-
-def split_features_labels(data_long):
-    X = data_long.drop(['composite_score', 'year'], axis=1)
-    y = data_long['composite_score']
-    return X, y

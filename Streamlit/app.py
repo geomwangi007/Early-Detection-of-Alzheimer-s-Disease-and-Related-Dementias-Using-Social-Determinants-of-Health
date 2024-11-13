@@ -1,11 +1,8 @@
 import streamlit as st
 import pandas as pd
+from model.model_training import train_model
+from utils.data_handling import load_data
 import pickle
-from PIL import Image
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 st.markdown(
     """
@@ -26,21 +23,22 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-header_container = st.container()
-processing_container = st.container()
+st.title("DementiaShield – Predicting Alzheimer’s with Social Insights")
 
-with header_container:
-   
-    # Different levels of text you can include in your app
-    st.title("DementiaShield – Predicting Alzheimer’s with Social Insights")
-    st.header("Welcome!")
-    st.subheader("This is a great app")
-    st.write("The AlzAware project aims to develop a predictive model for early identification of Alzheimer’s Disease (AD) and Alzheimer’s Disease-Related Dementias (AD/ADRD) based on social determinants of health. Utilizing data from the Mexican Health and Aging Study (MHAS), this project focuses on uncovering associations between social, economic, and environmental factors and cognitive decline risk. The ultimate goal is to enable early intervention and improved access to care, especially for underrepresented populations.")
+# File upload
+uploaded_file = st.file_uploader("Upload a .csv file")
+if uploaded_file:
+    input_data = pd.read_csv(uploaded_file)
 
-file = st.file_uploader('Upload a file (.txt)')
+    # Load and prepare training data (used for initial model training)
+    data = load_data('data/train_features.csv', 'data/train_labels.csv')
+    X = data.drop(['composite_score', 'year'], axis=1)
+    y = data['composite_score']
 
-# Another container
-with processing_container:
-    # Import dataset
-    train_data = pd.read_csv('Original data/train_features.csv')
-    train_labels = pd.read_csv('Original data/train_labels.csv')
+    # Train model and evaluate
+    num_cols = X.select_dtypes(include=['float64', 'int64']).columns.tolist()
+    cat_cols = X.select_dtypes(include=['object']).columns.tolist()
+    model, metrics = train_model(X, y, num_cols, cat_cols)
+    
+    st.write("Model Evaluation Metrics:")
+    st.json(metrics)
