@@ -19,7 +19,7 @@
 4. [Specific Objectives](#specific-objectives)
 5. [Data Understanding](#data-understanding) 
 6. - [Data Sources](*data-sources)
-   - [Key Steps in Data Understanding](*key-steps-in-data-understanding)
+   - [Data Overview](*data-overview)
 7. [Data Preparation](#data-preparation)
    
 8. [Modelling](#modelling)
@@ -44,17 +44,18 @@ To develop a predictive model for the early detection of Alzheimer’s Disease (
 - Potential for Generalization: Provide a framework that can be adapted for AD/ADRD prediction in other populations and regions.
 
 ## Data Understanding
+- Data Sources:
 The dataset used in this project was derived from the Mexican Health and Aging Study (MHAS), a publicly available longitudinal survey focusing on adults aged 50 and above in Mexico. This comprehensive dataset contains detailed information on demographic, socioeconomic, health, and lifestyle factors, making it ideal for exploring the impact of social determinants of health (SDOH) on cognitive outcomes.
 - Dataset Overview:
 The dataset includes information collected over multiple years, specifically 2003, 2012, 2016, and 2021. These years were selected to provide historical data (2003 and 2012) for training the predictive model and target outcomes (2016 and 2021) for evaluating cognitive health.
 
-- The dataset consists of several key variables used in the analysis:
+   - The dataset consists of several key variables used in the analysis:
 
-  - Demographics: Age, gender, marital status, and place of residence.
-  - Socioeconomic Factors: Education level, income, and employment status.
-  - Health Metrics: Self-reported health, chronic conditions, and body mass index (BMI).
-  - Lifestyle Behaviors: Physical activity, smoking status, and alcohol consumption.
-  - Cognitive Scores: Assessment of cognitive health over time, used as the primary outcome variable.
+     - Demographics: Age, gender, marital status, and place of residence.
+     - Socioeconomic Factors: Education level, income, and employment status.
+     - Health Metrics: Self-reported health, chronic conditions, and body mass index (BMI).
+     - Lifestyle Behaviors: Physical activity, smoking status, and alcohol consumption.
+     - Cognitive Scores: Assessment of cognitive health over time, used as the primary outcome variable.
 
 For download of the datasets, view the [dataset link](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/tree/main/Data) and for complete documentation of all the datasets.
 
