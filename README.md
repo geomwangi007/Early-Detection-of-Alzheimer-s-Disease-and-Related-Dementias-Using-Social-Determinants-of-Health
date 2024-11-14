@@ -21,12 +21,11 @@
    - [Data Sources](*data-sources)
    - [Data Overview](*data-overview)
 6. [Data Preparation](#data-preparation)
-7. [Modelling](#modelling)
-8. [Evaluation](#evaluation) 
-9. [Conclusion](#conclusion)
-10. [Recommendations](#recommendations)
-11. .[Possible next steps](#possible-next-steps)
-12. .[Resources](#resources)
+7. [Modelling and Evaluation](#modelling-and-evaluation) 
+8. [Conclusion](#conclusion)
+9. [Recommendations](#recommendations)
+10. .[Possible next steps](#possible-next-steps)
+11. .[Resources](#resources)
 
 ## Overview
 The AlzAware Project seeks to harness the power of predictive modeling to identify early signs of Alzheimer’s Disease (AD) and Alzheimer’s Disease-Related Dementias (AD/ADRD) by analyzing social determinants of health. Using data from the Mexican Health and Aging Study (MHAS), this initiative investigates how factors like socioeconomic status, education, and access to healthcare influence cognitive decline. The project aspires to empower early interventions, reduce health disparities, and improve care accessibility for underserved populations.
@@ -161,11 +160,43 @@ The analysis reveals a positive correlation between education level and composit
 - **Implications**:
   - Limitations negatively affect composite performance, emphasizing the importance of addressing multiple limitations holistically to improve overall outcomes.
 
-## Modelling
+## Modelling and Evaluation  
 
-## Evaluation
+## Model Performance Overview  
+- **Best Model**: Random Forest with RMSE of **37.8982**, indicating strong predictive performance.  
+- **Linear Regression**: RMSE of **41.5095**, showing potential for improvement.  
+- **Feature Selection**: Reduced RMSE to **37.4956**, improving model focus and performance.  
 
-## Conclusion
+## Key Insights  
+1. **Hyperparameter Tuning**:  
+   - Limited improvement with tuned Random Forest RMSE slightly higher than the baseline (**37.8070** vs. **37.8982**).  
+   - Indicates default parameters suit this dataset better.  
+
+2. **Feature Selection**:  
+   - Enhanced performance by prioritizing relevant features.  
+   - R² increased to **0.5966**, explaining ~60% of variance.  
+
+3. **Dimensionality Reduction (PCA)**:  
+   - Decreased model performance (RMSE **48.99**, R² **0.3113**).  
+   - Likely due to loss of key features or introduction of noise.  
+
+## Linear Regression Enhancements  
+- **Polynomial Features**:  
+  - Reduced RMSE to **37.5991** with R² = **0.6137**.  
+- **Ridge Regression**:  
+  - Optimized alpha achieved RMSE of **22.4754** and R² of **0.861**.  
+  - Explained ~86% of variance with low prediction error.  
+
+## Feature Importance Analysis  
+- **Key Predictors**:  
+  - Education-related variables (*rameduc_m, edu_gru*) and age are the most significant.  
+  - Age negatively impacts scores, while education has a positive influence.  
+- **Negligible Features**:  
+  - Identified for potential removal to simplify models without affecting performance.  
+
+## Conclusion  
+Random Forest and Ridge Regression models demonstrate strong predictive capabilities. Feature selection and regularization have been instrumental in improving model accuracy while reducing complexity.  
+Further work will focus on refining models and exploring alternative techniques to enhance performance.
 
 ## Recommendations
 
