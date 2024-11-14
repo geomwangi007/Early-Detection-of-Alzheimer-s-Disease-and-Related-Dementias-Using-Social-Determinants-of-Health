@@ -20,27 +20,45 @@ EDUCATION_LEVELS = {
     'Completed Higher Education': 6
 }
 
-FREQUENCY_LEVELS = {
-    'Never': 0,
-    'Less than monthly': 1,
-    'Monthly': 2,
-    'Several times a month': 3,
-    'Weekly': 4,
-    'Several times a week': 5,
-    'Daily': 6
-}
-
 def user_input_features():
     st.sidebar.header('Education and Background')
     
     # Education level (dropdown)
-    edu_gru = st.sidebar.selectbox(
-        'Education Level (edu_gru)',
+    edu_gru_12 = st.sidebar.selectbox(
+        'Education Level (edu_gru_12)',
         options=list(EDUCATION_LEVELS.keys()),
         index=list(EDUCATION_LEVELS.keys()).index('Completed Primary'),
         help='Your highest level of education completed'
     )
+     # Other social and demographic inputs
+    age_03 = st.sidebar.number_input(
+        'Age (age_03)',
+        min_value=0,
+        max_value=120,
+        value=60,
+        help='Age in years'
+    )
+    edu_gru_03 = st.sidebar.selectbox(
+        "Father's Education Level (edu_gru_03)",
+        options=list(EDUCATION_LEVELS.keys()),
+        index=list(EDUCATION_LEVELS.keys()).index('Some Primary'),
+        help="Father's highest level of education completed"
+    )
+    age_12 = st.sidebar.number_input(
+        'Age (age_12)',
+        min_value=0,
+        max_value=120,
+        value=65,
+        help='Age in years'
+    )
     
+    n_living_child_12 = st.sidebar.number_input(
+        'Number of Living Children (n_living_child_12)',
+        min_value=0,
+        max_value=15,
+        value=2,
+        help='Number of living children'
+    )
     # Mother's education (dropdown)
     rameduc_m = st.sidebar.selectbox(
         "Mother's Education Level (rameduc_m)",
@@ -48,75 +66,50 @@ def user_input_features():
         index=list(EDUCATION_LEVELS.keys()).index('Some Primary'),
         help="Mother's highest level of education completed"
     )
-
-    st.sidebar.header('Social Activities and Lifestyle')
     
-    # Reading, table games, and social activities (checkboxes)
-    table_games_12 = st.sidebar.checkbox(
-        'Plays Table Games',
-        help='Regular participation in cards, dominoes, chess, etc.'
-    )
-    reads_12 = st.sidebar.checkbox(
-        'Reads Regularly',
-        help='Regular reading of books, magazines, newspapers'
-    )
-    attends_club_12 = st.sidebar.checkbox(
-        'Attends Club Meetings',
-        help='Regular attendance at club or social group meetings'
-    )
-    care_child_12 = st.sidebar.checkbox(
-        'Provides Childcare',
-        help='Regularly looks after children under 12'
-    )
-    
-    st.sidebar.header('Demographics')
-    
-    # Other social and demographic inputs
-    games_12 = st.sidebar.selectbox(
-        'Game Frequency (games_12)',
-        options=list(FREQUENCY_LEVELS.keys()),
-        index=list(FREQUENCY_LEVELS.keys()).index('Weekly'),
-        help='Frequency of playing games with friends or family'
+   
+    adl_walk_03 = st.sidebar.selectbox(
+        'ADL Walking (adl_walk_03)',
+        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
+        index=0,
+        help='Difficulty in walking in the past year'
     )
 
-    rafeduc_m = st.sidebar.selectbox(
-        "Father's Education Level (rafeduc_m)",
-        options=list(EDUCATION_LEVELS.keys()),
-        index=list(EDUCATION_LEVELS.keys()).index('Some Primary'),
-        help="Father's highest level of education completed"
-    )
-    
-    n_living_child = st.sidebar.number_input(
-        'Number of Living Children',
-        min_value=0,
-        max_value=15,
-        value=2,
-        help='Number of living children'
+    iadl_money_03 = st.sidebar.selectbox(
+        'IADL Money Management (iadl_money_03)',
+        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
+        index=0,
+        help='Difficulty managing money in the past year'
     )
 
-    seg_pop_12 = st.sidebar.slider(
-        'Population Segment Score (seg_pop_12)',
-        min_value=0.0,
-        max_value=10.0,
-        value=5.0,
-        step=0.1,
-        help='Score representing socioeconomic population segment (0-10)'
+    adl_walk_12 = st.sidebar.selectbox(
+        'ADL Walking (adl_walk_12)',
+        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
+        index=0,
+        help='Difficulty in walking in the past year'
     )
-    
+
+    iadl_money_12 = st.sidebar.selectbox(
+        'IADL Money Management (iadl_money_12)',
+        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
+        index=0,
+        help='Difficulty managing money in the past year'
+    )
+
     # Create the data dictionary with proper ordinal encoding
     data = {
-        'edu_gru': EDUCATION_LEVELS[edu_gru],
+        'edu_gru_12': EDUCATION_LEVELS[edu_gru_12],
         'rameduc_m': EDUCATION_LEVELS[rameduc_m],
-        'table_games_12': int(table_games_12),
-        'reads_12': int(reads_12),
-        'games_12': FREQUENCY_LEVELS[games_12],
-        'attends_club_12': int(attends_club_12),
-        'rafeduc_m': EDUCATION_LEVELS[rafeduc_m],
-        'n_living_child': n_living_child,
-        'seg_pop_12': seg_pop_12,
-        'care_child_12': int(care_child_12)
+        'age_03': age_03,
+        'edu_gru_03': EDUCATION_LEVELS[edu_gru_03],
+        'age_12': age_12,
+        'n_living_child_12': n_living_child_12,
+        'adl_walk_03': adl_walk_03,
+        'iadl_money_03': iadl_money_03,
+        'adl_walk_12': adl_walk_12,
+        'iadl_money_12': iadl_money_12
     }
-    
+
     return pd.DataFrame(data, index=[0])
 
 # Get user input
@@ -130,11 +123,11 @@ st.write("Input Values:", df)
 @st.cache_resource
 def load_model():
     try:
-        with open('Models/new_ridge_model.pkl', 'rb') as file:
+        with open('Models/final_ridge_model.pkl', 'rb') as file:
             model = pickle.load(file)
         return model
     except FileNotFoundError:
-        st.error("Model file not found. Please ensure 'model.pkl' is present.")
+        st.error("Model file not found. Please ensure 'final_ridge_model.pkl' is present.")
         return None
 
 model = load_model()
