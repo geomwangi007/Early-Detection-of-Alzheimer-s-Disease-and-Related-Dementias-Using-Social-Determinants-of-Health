@@ -99,11 +99,11 @@ def user_input_features():
     # Create the data dictionary with proper ordinal encoding
     data = {
         'edu_gru_12': EDUCATION_LEVELS[edu_gru_12],
-        'rameduc_m': EDUCATION_LEVELS[rameduc_m],
         'age_03': age_03,
         'edu_gru_03': EDUCATION_LEVELS[edu_gru_03],
         'age_12': age_12,
         'n_living_child_12': n_living_child_12,
+        'rameduc_m': EDUCATION_LEVELS[rameduc_m],
         'adl_walk_03': adl_walk_03,
         'iadl_money_03': iadl_money_03,
         'adl_walk_12': adl_walk_12,
