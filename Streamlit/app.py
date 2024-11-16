@@ -67,34 +67,6 @@ def user_input_features():
         help="Mother's highest level of education completed"
     )
     
-   
-    adl_walk_03 = st.sidebar.selectbox(
-        'ADL Walking (adl_walk_03)',
-        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
-        index=0,
-        help='Difficulty in walking in the past year'
-    )
-
-    iadl_money_03 = st.sidebar.selectbox(
-        'IADL Money Management (iadl_money_03)',
-        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
-        index=0,
-        help='Difficulty managing money in the past year'
-    )
-
-    adl_walk_12 = st.sidebar.selectbox(
-        'ADL Walking (adl_walk_12)',
-        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
-        index=0,
-        help='Difficulty in walking in the past year'
-    )
-
-    iadl_money_12 = st.sidebar.selectbox(
-        'IADL Money Management (iadl_money_12)',
-        options=['No Difficulty', 'Some Difficulty', 'A Lot of Difficulty', 'Cannot Do'],
-        index=0,
-        help='Difficulty managing money in the past year'
-    )
 
     # Create the data dictionary with proper ordinal encoding
     data = {
@@ -104,10 +76,7 @@ def user_input_features():
         'age_12': age_12,
         'n_living_child_12': n_living_child_12,
         'rameduc_m': EDUCATION_LEVELS[rameduc_m],
-        'adl_walk_03': adl_walk_03,
-        'iadl_money_03': iadl_money_03,
-        'adl_walk_12': adl_walk_12,
-        'iadl_money_12': iadl_money_12
+        
     }
 
     return pd.DataFrame(data, index=[0])
@@ -123,7 +92,7 @@ st.write("Input Values:", df)
 @st.cache_resource
 def load_model():
     try:
-        with open('Models/final_ridge_model.pkl', 'rb') as file:
+        with open('Models/revised_ridge_model.pkl', 'rb') as file:
             model = pickle.load(file)
         return model
     except FileNotFoundError:
