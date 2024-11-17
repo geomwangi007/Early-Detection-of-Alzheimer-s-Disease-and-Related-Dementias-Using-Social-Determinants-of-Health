@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+from sklearn.compose import ColumnTransformer
 from custom_transformers import TemporalFeatureEngineer, EducationProgressionTransformer, MaritalTransitionTransformer, ChronicIllnessTransformer, ADLIADLTransformer, HealthAssessmentChangeTransformer, MoodScoreTransformer, ConsistentExerciseTransformer, LifestyleHealthIndexTransformer, SocioeconomicFeaturesTransformer, SocialEngagementTransformer, HealthServicesTransformer, CustomFeatureEngineer
 from sklearn.pipeline import Pipeline
+
 
 
 def map_ordinal_variables(X, ordinal_cols, ordinal_mappings):
