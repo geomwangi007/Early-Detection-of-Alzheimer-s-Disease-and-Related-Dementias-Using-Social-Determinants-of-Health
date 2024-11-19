@@ -8,6 +8,8 @@ from sklearn.pipeline import Pipeline
 
 
 
+
+
 def map_ordinal_variables(X, ordinal_cols, ordinal_mappings):
     """Function to map ordinal variables to numerical values."""
     X = X.copy()
@@ -19,7 +21,7 @@ def map_ordinal_variables(X, ordinal_cols, ordinal_mappings):
 
 # Load the pre-trained model
 try:
-    model = joblib.load("stacked_model.pkl")
+    model = joblib.load("stacked_model_Branley.pkl")
 except FileNotFoundError:
     st.error("The model file 'stacked_model.pkl' was not found. Ensure the file is in the same directory as this script.")
 
@@ -129,6 +131,30 @@ if submission_file is not None and features_file is not None:
         st.error(f"🚨 An error occurred: {e}")
 else:
     st.info("Please upload both files to proceed.")
+
+
+import streamlit as st
+
+# Display a brief disclaimer with formatting
+st.markdown(
+    """
+    <div style="background-color:#f8d7da; padding: 20px; border-radius: 5px;">
+        <h3 style="color:#721c24;">⚠️ Disclaimer</h3>
+        <p style="color:#721c24; font-size: 16px;">
+            This model is for <strong>research and educational purposes only</strong>. It is not a substitute for professional
+            medical advice, diagnosis, or treatment.
+        </p>
+        <p style="color:#721c24; font-size: 16px;">
+            Do <strong>not use</strong> this tool for medical decisions. Always consult a healthcare professional for guidance.
+        </p>
+        <p style="color:#721c24; font-size: 16px;">
+            The project contributors are not liable for any actions taken based on this model's predictions.
+        </p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
 
 # Footer
 st.markdown("---")
