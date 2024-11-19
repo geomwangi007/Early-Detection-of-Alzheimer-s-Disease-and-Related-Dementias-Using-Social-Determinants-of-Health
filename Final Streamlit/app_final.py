@@ -21,7 +21,7 @@ def map_ordinal_variables(X, ordinal_cols, ordinal_mappings):
 
 # Load the pre-trained model
 try:
-    model = joblib.load("stacked_model_Branley.pkl")
+    model = joblib.load("stacked_model_latest.pkl")
 except FileNotFoundError:
     st.error("The model file 'stacked_model.pkl' was not found. Ensure the file is in the same directory as this script.")
 
