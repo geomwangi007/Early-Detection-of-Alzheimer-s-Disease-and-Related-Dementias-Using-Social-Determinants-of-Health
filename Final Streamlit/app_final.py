@@ -6,7 +6,13 @@ from sklearn.compose import ColumnTransformer
 from custom_transformers import TemporalFeatureEngineer, EducationProgressionTransformer, MaritalTransitionTransformer, ChronicIllnessTransformer, ADLIADLTransformer, HealthAssessmentChangeTransformer, MoodScoreTransformer, ConsistentExerciseTransformer, LifestyleHealthIndexTransformer, SocioeconomicFeaturesTransformer, SocialEngagementTransformer, HealthServicesTransformer, CustomFeatureEngineer
 from sklearn.pipeline import Pipeline
 
-
+# Streamlit app configuration
+st.set_page_config(
+    page_title="Cognitive Insights Hub",
+    page_icon="🧠",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
 
 
 
@@ -37,13 +43,7 @@ def preprocess_data(test_data, expected_features):
 
     return X_test
 
-# Streamlit app configuration
-st.set_page_config(
-    page_title="Cognitive Insights Hub",
-    page_icon="🧠",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+
 
 # **Header Section**
 st.title("🧠 Cognitive Insights Hub")
