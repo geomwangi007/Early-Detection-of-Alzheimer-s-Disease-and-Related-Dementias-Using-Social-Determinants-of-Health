@@ -195,6 +195,10 @@ The modeling approach will focus on predictive machine learning techniques tailo
 3.	Feature Engineering: Temporal changes, education progression, and health metrics will be key predictors.
 4.	Model Selection: A baseline logistic regression will evaluate the dataset's predictability. Subsequent models will include feature selection and hyperparameter tuning.
 5.	Validation: K-fold cross-validation ensures robust results. Metrics like accuracy, precision, recall, F1-score, and ROC-AUC will measure success.
+
+The Best Model was: The stacked model
+RMSE:39.55
+R² :58
   
 
 ## Feature Importance Analysis  
