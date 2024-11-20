@@ -195,19 +195,27 @@ The analysis reveals a positive correlation between education level and composit
   - Identified for potential removal to simplify models without affecting performance.  
 
 ## Conclusion  
-Random Forest and Ridge Regression models demonstrate strong predictive capabilities. Feature selection and regularization have been instrumental in improving model accuracy while reducing complexity.  
-Further work will focus on refining models and exploring alternative techniques to enhance performance.
+The AlzAware project demonstrates the potential of social determinants of health in predicting early signs of Alzheimer’s Disease. Key findings from data exploration reveal that demographic and socioeconomic factors significantly influence cognitive health. By implementing machine learning models, the project addresses gaps in early detection and provides a scalable solution for underserved populations.
 
 ## Recommendations
-
+1.	Health Policy: Incorporate insights from the model into public health strategies for targeted early interventions.
+2.	Community Outreach: Develop awareness programs in regions with limited access to healthcare.
+3.	Integration: Collaborate with healthcare providers to use the model in clinical workflows.
+4.	Bias Reduction: Continuously refine the model to ensure fairness across diverse populations.
+   
 ## Possible next steps
+1.	Data Expansion: Incorporate additional datasets for broader demographic coverage.
+2.	Model Refinement: Explore advanced neural networks for improved prediction accuracy.
+3.	Personalization: Tailor interventions based on individual risk profiles predicted by the model.
+4.	Longitudinal Studies: Use future survey data to validate and enhance model performance.
+5.	Explainability: Develop interpretable models to gain insights into the key predictors driving cognitive health outcomes.
 
 ## Resources
-1: For the complete analysis, here is the [Notebook](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/blob/main/Main.ipynb)
+1: For the complete analysis, here is the [Notebook](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/blob/main/Index.ipynb)
 
 2: The presentation slides are in this [Link](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/blob/main/Main.ipynb)
 
-3: The link to the [data report](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/tree/main/Data)
+3: The link to the [data report](https://github.com/geomwangi007/Early-Detection-of-Alzheimer-s-Disease-and-Related-Dementias-Using-Social-Determinants-of-Health/blob/main/ALZAWARE%20DATA%20REPORT%20.pdf)
 
 
 

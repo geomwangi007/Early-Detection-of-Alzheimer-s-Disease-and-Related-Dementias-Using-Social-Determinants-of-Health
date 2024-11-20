@@ -6,6 +6,14 @@ from sklearn.compose import ColumnTransformer
 from custom_transformers import TemporalFeatureEngineer, EducationProgressionTransformer, MaritalTransitionTransformer, ChronicIllnessTransformer, ADLIADLTransformer, HealthAssessmentChangeTransformer, MoodScoreTransformer, ConsistentExerciseTransformer, LifestyleHealthIndexTransformer, SocioeconomicFeaturesTransformer, SocialEngagementTransformer, HealthServicesTransformer, CustomFeatureEngineer
 from sklearn.pipeline import Pipeline
 
+# Streamlit app configuration
+st.set_page_config(
+    page_title="Cognitive Insights Hub",
+    page_icon="🧠",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 
 
 def map_ordinal_variables(X, ordinal_cols, ordinal_mappings):
@@ -19,7 +27,7 @@ def map_ordinal_variables(X, ordinal_cols, ordinal_mappings):
 
 # Load the pre-trained model
 try:
-    model = joblib.load("stacked_model.pkl")
+    model = joblib.load("stacked_model_latest.pkl")
 except FileNotFoundError:
     st.error("The model file 'stacked_model.pkl' was not found. Ensure the file is in the same directory as this script.")
 
@@ -35,13 +43,7 @@ def preprocess_data(test_data, expected_features):
 
     return X_test
 
-# Streamlit app configuration
-st.set_page_config(
-    page_title="Cognitive Insights Hub",
-    page_icon="🧠",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+
 
 # **Header Section**
 st.title("🧠 Cognitive Insights Hub")
@@ -129,6 +131,30 @@ if submission_file is not None and features_file is not None:
         st.error(f"🚨 An error occurred: {e}")
 else:
     st.info("Please upload both files to proceed.")
+
+
+import streamlit as st
+
+# Display a brief disclaimer with formatting
+st.markdown(
+    """
+    <div style="background-color:#f8d7da; padding: 20px; border-radius: 5px;">
+        <h3 style="color:#721c24;">⚠️ Disclaimer</h3>
+        <p style="color:#721c24; font-size: 16px;">
+            This model is for <strong>research and educational purposes only</strong>. It is not a substitute for professional
+            medical advice, diagnosis, or treatment.
+        </p>
+        <p style="color:#721c24; font-size: 16px;">
+            Do <strong>not use</strong> this tool for medical decisions. Always consult a healthcare professional for guidance.
+        </p>
+        <p style="color:#721c24; font-size: 16px;">
+            The project contributors are not liable for any actions taken based on this model's predictions.
+        </p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
 
 # Footer
 st.markdown("---")
