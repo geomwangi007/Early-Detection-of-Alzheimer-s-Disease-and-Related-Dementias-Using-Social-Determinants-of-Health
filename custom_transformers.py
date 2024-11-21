@@ -1,6 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 import numpy as np
+from sklearn.pipeline import Pipeline
 
 # Mappings for ordinal variables
 age_mapping = {
@@ -146,20 +147,15 @@ class TemporalFeatureEngineer(BaseEstimator, TransformerMixin):
     """
     Transformer that creates temporal features such as change over time
     and time gap since last measurement.
-
-    Parameters:
-    - numerical_common_features: List of features present in both 2003 and 2012 for temporal analysis.
-    - ordinal_mappings: Dictionary mapping ordinal variables to numerical values.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Applies temporal feature engineering to the data.
     """
     def __init__(self, numerical_common_features, ordinal_mappings):
         self.numerical_common_features = numerical_common_features
         self.ordinal_mappings = ordinal_mappings
+        self.feature_names_in_ = None
 
     def fit(self, X, y=None):
+        # Store feature names for get_feature_names_out()
+        self.feature_names_in_ = X.columns
         return self  # Nothing to fit
 
     def transform(self, X):
@@ -204,11 +200,25 @@ class TemporalFeatureEngineer(BaseEstimator, TransformerMixin):
             else:
                 X[change_col] = np.nan  # Set change to NaN if both columns do not exist
 
-        # Drop 'last_feature_year' if not needed
-        # X.drop(columns=['last_feature_year'], inplace=True)
-        # Depending on whether we want to keep it
-
         return X
+
+    def get_feature_names_out(self, input_features=None):
+        # Return the feature names after transformation
+        # Include new features added during transform
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+
+        # Add new features
+        output_features.append('last_feature_year')
+        output_features.append('time_gap')
+
+        # Add change columns
+        for feature in self.numerical_common_features:
+            change_col = feature + '_change'
+            output_features.append(change_col)
+
+        return np.array(output_features)
 
     @staticmethod
     def get_last_feature_year(X):
@@ -227,20 +237,18 @@ class TemporalFeatureEngineer(BaseEstimator, TransformerMixin):
 
         return last_year
 
+
 class EducationProgressionTransformer(BaseEstimator, TransformerMixin):
     """
     Transformer that calculates the change in education level between 2003 and 2012.
-    
-    Methods:
-    - fit: Returns self.
-    - transform: Computes 'education_transition' as the difference between 'edu_gru_12' and 'edu_gru_03'.
     """
     def __init__(self):
-        pass
-    
+        self.feature_names_in_ = None
+
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self  # Nothing to fit
-    
+
     def transform(self, X):
         X = X.copy()
         if 'edu_gru_03' in X.columns and 'edu_gru_12' in X.columns:
@@ -254,19 +262,26 @@ class EducationProgressionTransformer(BaseEstimator, TransformerMixin):
         else:
             X['education_transition'] = np.nan
         return X
+
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including the new feature
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.append('education_transition')
+        return np.array(output_features)
+
 class MaritalTransitionTransformer(BaseEstimator, TransformerMixin):
     """
     Transformer that calculates the marital transition between two time points.
-    
-    Parameters:
-    - married_cols_03: List of marital status columns at time point 2003.
-    - married_cols_12: List of marital status columns at time point 2012.
     """
     def __init__(self, married_cols_03, married_cols_12):
         self.married_cols_03 = married_cols_03
         self.married_cols_12 = married_cols_12
+        self.feature_names_in_ = None
 
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
 
     def transform(self, X):
@@ -282,27 +297,28 @@ class MaritalTransitionTransformer(BaseEstimator, TransformerMixin):
             X['marital_transition'] = np.nan
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including the new feature
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.append('marital_transition')
+        return np.array(output_features)
+
 # Count of chronic illnesses, with change over time
 class ChronicIllnessTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that calculates the total number of chronic illnesses for each individual
-    in 2003 and 2012 by summing binary indicators of specific chronic illnesses.
-    
-    Parameters:
-    - chronic_illness_cols_03: List of chronic illness columns for 2003.
-    - chronic_illness_cols_12: List of chronic illness columns for 2012.
-    
-    Methods:
-    - fit: Returns self.
-    - transform: Adds 'chronic_illness_count_03' and 'chronic_illness_count_12' to the dataset.
+    Transformer that calculates the total number of chronic illnesses and change over time.
     """
     def __init__(self, chronic_illness_cols_03, chronic_illness_cols_12):
         self.chronic_illness_cols_03 = chronic_illness_cols_03
         self.chronic_illness_cols_12 = chronic_illness_cols_12
-    
+        self.feature_names_in_ = None
+
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
-    
+
     def transform(self, X):
         X = X.copy()
         # Adjust columns based on those present in X
@@ -331,29 +347,28 @@ class ChronicIllnessTransformer(BaseEstimator, TransformerMixin):
             X['chronic_illness_count_change'] = np.nan
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including new features
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.extend(['chronic_illness_count_03', 'chronic_illness_count_12', 'chronic_illness_count_change'])
+        return np.array(output_features)
+
 # Limitations of Activities of daily living count and progression
 class ADLIADLTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that calculates the total number of ADL and IADL limitations
-    for each individual in 2003 and 2012, and computes the progression over time.
-
-    Parameters:
-    - adl_cols_03: List of ADL columns for 2003.
-    - adl_cols_12: List of ADL columns for 2012.
-    - iadl_cols_03: List of IADL columns for 2003.
-    - iadl_cols_12: List of IADL columns for 2012.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds 'total_adl_limitations_03', 'total_adl_limitations_12', 'total_iadl_limitations_03', 'total_iadl_limitations_12', and 'adl_iadl_progression' to the dataset.
+    Transformer that calculates the total number of ADL and IADL limitations and progression.
     """
     def __init__(self, adl_cols_03, adl_cols_12, iadl_cols_03, iadl_cols_12):
         self.adl_cols_03 = adl_cols_03
         self.adl_cols_12 = adl_cols_12
         self.iadl_cols_03 = iadl_cols_03
         self.iadl_cols_12 = iadl_cols_12
+        self.feature_names_in_ = None
 
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
 
     def transform(self, X):
@@ -377,22 +392,30 @@ class ADLIADLTransformer(BaseEstimator, TransformerMixin):
             X['adl_iadl_progression'] = np.nan
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including new features
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.extend([
+            'total_adl_limitations_03', 'total_adl_limitations_12',
+            'total_iadl_limitations_03', 'total_iadl_limitations_12',
+            'adl_iadl_progression'
+        ])
+        return np.array(output_features)
+
 # Self Reported Health Change
 class HealthAssessmentChangeTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that calculates the change in self-reported global health status
-    between 2003 and 2012.
-    
-    Methods:
-    - fit: Returns self.
-    - transform: Computes 'health_self_assessment_change' as the difference between 'glob_hlth_12' and 'glob_hlth_03'.
+    Transformer that calculates the change in self-reported global health status.
     """
     def __init__(self):
-        pass
-    
+        self.feature_names_in_ = None
+
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self  # Nothing to fit
-    
+
     def transform(self, X):
         X = X.copy()
         if 'glob_hlth_03' in X.columns and 'glob_hlth_12' in X.columns:
@@ -408,29 +431,28 @@ class HealthAssessmentChangeTransformer(BaseEstimator, TransformerMixin):
             X['health_self_assessment_change'] = np.nan
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including the new feature
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.append('health_self_assessment_change')
+        return np.array(output_features)
+
 # Custom transformer to engineer positive and negative mood scores
 class MoodScoreTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that computes aggregate positive and negative mood scores for each individual
-    in 2003 and 2012, and calculates changes over time.
-
-    Parameters:
-    - positive_mood_cols_03: List of positive mood indicator columns for 2003.
-    - positive_mood_cols_12: List of positive mood indicator columns for 2012.
-    - negative_mood_cols_03: List of negative mood indicator columns for 2003.
-    - negative_mood_cols_12: List of negative mood indicator columns for 2012.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds mood scores and changes to the dataset.
+    Transformer that computes aggregate positive and negative mood scores and changes.
     """
     def __init__(self, positive_mood_cols_03, positive_mood_cols_12, negative_mood_cols_03, negative_mood_cols_12):
         self.positive_mood_cols_03 = positive_mood_cols_03
         self.positive_mood_cols_12 = positive_mood_cols_12
         self.negative_mood_cols_03 = negative_mood_cols_03
         self.negative_mood_cols_12 = negative_mood_cols_12
+        self.feature_names_in_ = None
     
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
     
     def transform(self, X):
@@ -452,7 +474,7 @@ class MoodScoreTransformer(BaseEstimator, TransformerMixin):
             if cols:
                 X[cols] = X[cols].fillna(0)
         
-        # Create aggregate scores for positive and negative moods in 2003
+        # Create aggregate scores for positive and negative moods
         if pos_mood_cols_03:
             X['positive_mood_score_03'] = X[pos_mood_cols_03].sum(axis=1)
         else:
@@ -463,7 +485,6 @@ class MoodScoreTransformer(BaseEstimator, TransformerMixin):
         else:
             X['negative_mood_score_03'] = np.nan
         
-        # Create aggregate scores for positive and negative moods in 2012
         if pos_mood_cols_12:
             X['positive_mood_score_12'] = X[pos_mood_cols_12].sum(axis=1)
         else:
@@ -485,20 +506,29 @@ class MoodScoreTransformer(BaseEstimator, TransformerMixin):
         
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including new features
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        new_features = [
+            'positive_mood_score_03', 'negative_mood_score_03',
+            'positive_mood_score_12', 'negative_mood_score_12',
+            'positive_mood_change', 'negative_mood_change'
+        ]
+        output_features.extend(new_features)
+        return np.array(output_features)
+
 # Consistency of exercise tracking
 class ConsistentExerciseTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that creates a feature indicating whether an individual consistently exercised
-    three times per week in both 2003 and 2012.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds 'consistent_exercise' to the dataset.
+    Transformer that creates a feature indicating consistent exercise.
     """
     def __init__(self):
-        pass
+        self.feature_names_in_ = None
     
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self  # Nothing to fit
     
     def transform(self, X):
@@ -522,26 +552,26 @@ class ConsistentExerciseTransformer(BaseEstimator, TransformerMixin):
             X['consistent_exercise'] = np.nan
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including 'consistent_exercise'
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.append('consistent_exercise')
+        return np.array(output_features)
 
 # Alcohol and smoking tracking
 class LifestyleHealthIndexTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that computes a lifestyle health index for each individual in 2003 and 2012
-    by summing up binary indicators for alcohol consumption and tobacco use.
-
-    Parameters:
-    - lifestyle_cols_03: List of lifestyle columns for 2003.
-    - lifestyle_cols_12: List of lifestyle columns for 2012.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds 'lifestyle_health_index_03', 'lifestyle_health_index_12', and optionally 'lifestyle_health_index_change' to the dataset.
+    Transformer that computes a lifestyle health index and changes over time.
     """
     def __init__(self, lifestyle_cols_03, lifestyle_cols_12):
         self.lifestyle_cols_03 = lifestyle_cols_03
         self.lifestyle_cols_12 = lifestyle_cols_12
+        self.feature_names_in_ = None
     
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
     
     def transform(self, X):
@@ -573,29 +603,30 @@ class LifestyleHealthIndexTransformer(BaseEstimator, TransformerMixin):
 
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including new features
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.extend([
+            'lifestyle_health_index_03', 'lifestyle_health_index_12', 'lifestyle_health_index_change'
+        ])
+        return np.array(output_features)
+
 # Income and insurance coverage
 class SocioeconomicFeaturesTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that computes aggregate income and insurance coverage depth for each individual
-    in 2003 and 2012, and determines insurance continuity over time.
-
-    Parameters:
-    - income_cols_03: List of income columns for 2003.
-    - income_cols_12: List of income columns for 2012.
-    - insurance_cols_03: List of insurance columns for 2003.
-    - insurance_cols_12: List of insurance columns for 2012.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds socioeconomic features to the dataset.
+    Transformer that computes aggregate income, insurance coverage depth, and insurance continuity.
     """
     def __init__(self, income_cols_03, income_cols_12, insurance_cols_03, insurance_cols_12):
         self.income_cols_03 = income_cols_03
         self.income_cols_12 = income_cols_12
         self.insurance_cols_03 = insurance_cols_03
         self.insurance_cols_12 = insurance_cols_12
+        self.feature_names_in_ = None
     
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
     
     def transform(self, X):
@@ -639,27 +670,33 @@ class SocioeconomicFeaturesTransformer(BaseEstimator, TransformerMixin):
         X['insurance_continuity'] = np.nan
         X.loc[valid_insurance, 'insurance_continuity'] = ((X.loc[valid_insurance, 'insurance_coverage_depth_03'] > 0) & (X.loc[valid_insurance, 'insurance_coverage_depth_12'] > 0)).astype(int)
         
-        # Optionally, calculate changes over time
-        # (Include inflation adjustment if applicable)
-        
         return X
+
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including new features
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        new_features = [
+            'aggregate_income_03', 'aggregate_income_12',
+            'insurance_coverage_depth_03', 'insurance_coverage_depth_12',
+            'insurance_continuity'
+        ]
+        output_features.extend(new_features)
+        return np.array(output_features)
+
 
 # Social Engagement score
 class SocialEngagementTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that computes a social engagement score for each individual in 2012 by summing up various indicators of social activities.
-
-    Parameters:
-    - social_engagement_cols: List of social engagement columns.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds 'social_engagement_12' to the dataset.
+    Transformer that computes a social engagement score for each individual in 2012.
     """
     def __init__(self, social_engagement_cols):
         self.social_engagement_cols = social_engagement_cols
+        self.feature_names_in_ = None
     
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
     
     def transform(self, X):
@@ -676,28 +713,28 @@ class SocialEngagementTransformer(BaseEstimator, TransformerMixin):
             X['social_engagement_12'] = np.nan
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including 'social_engagement_12'
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        output_features.append('social_engagement_12')
+        return np.array(output_features)
+
 # Custom transformer to create preventive care index and health services usage
 class HealthServicesTransformer(BaseEstimator, TransformerMixin):
     """
-    Transformer that creates indices for preventive care and health service usage for each individual in 2003 and 2012, and calculates changes over time.
-
-    Parameters:
-    - preventive_care_cols_03: List of preventive care columns for 2003.
-    - preventive_care_cols_12: List of preventive care columns for 2012.
-    - health_service_usage_cols_03: List of health service usage columns for 2003.
-    - health_service_usage_cols_12: List of health service usage columns for 2012.
-
-    Methods:
-    - fit: Returns self.
-    - transform: Adds indices and changes to the dataset.
+    Transformer that creates indices for preventive care and health service usage.
     """
     def __init__(self, preventive_care_cols_03, preventive_care_cols_12, health_service_usage_cols_03, health_service_usage_cols_12):
         self.preventive_care_cols_03 = preventive_care_cols_03
         self.preventive_care_cols_12 = preventive_care_cols_12
         self.health_service_usage_cols_03 = health_service_usage_cols_03
         self.health_service_usage_cols_12 = health_service_usage_cols_12
+        self.feature_names_in_ = None
 
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
 
     def transform(self, X):
@@ -746,15 +783,48 @@ class HealthServicesTransformer(BaseEstimator, TransformerMixin):
 
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including new features
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        new_features = [
+            'preventive_care_index_03', 'preventive_care_index_12', 'preventive_care_change',
+            'health_service_usage_03', 'health_service_usage_12', 'health_service_usage_change'
+        ]
+        output_features.extend(new_features)
+        return np.array(output_features)
+
 # Create a custom transformer that applies all custom transformations
 class CustomFeatureEngineer(BaseEstimator, TransformerMixin):
-    def __init__(self, numerical_common_features, ordinal_mappings, married_cols_03, married_cols_12,
-                 chronic_illness_cols_03, chronic_illness_cols_12, adl_cols_03, adl_cols_12,
-                 iadl_cols_03, iadl_cols_12, positive_mood_cols_03, positive_mood_cols_12,
-                 negative_mood_cols_03, negative_mood_cols_12, lifestyle_cols_03, lifestyle_cols_12,
-                 income_cols_03, income_cols_12, insurance_cols_03, insurance_cols_12, social_engagement_cols,
-                 preventive_care_cols_03, preventive_care_cols_12, health_service_usage_cols_03, health_service_usage_cols_12):
-        
+    def __init__(
+        self,
+        numerical_common_features,
+        ordinal_mappings,
+        married_cols_03,
+        married_cols_12,
+        chronic_illness_cols_03,
+        chronic_illness_cols_12,
+        adl_cols_03,
+        adl_cols_12,
+        iadl_cols_03,
+        iadl_cols_12,
+        positive_mood_cols_03,
+        positive_mood_cols_12,
+        negative_mood_cols_03,
+        negative_mood_cols_12,
+        lifestyle_cols_03,
+        lifestyle_cols_12,
+        income_cols_03,
+        income_cols_12,
+        insurance_cols_03,
+        insurance_cols_12,
+        social_engagement_cols,
+        preventive_care_cols_03,
+        preventive_care_cols_12,
+        health_service_usage_cols_03,
+        health_service_usage_cols_12
+    ):
         # Assign parameters to instance variables
         self.numerical_common_features = numerical_common_features
         self.ordinal_mappings = ordinal_mappings
@@ -781,22 +851,37 @@ class CustomFeatureEngineer(BaseEstimator, TransformerMixin):
         self.preventive_care_cols_12 = preventive_care_cols_12
         self.health_service_usage_cols_03 = health_service_usage_cols_03
         self.health_service_usage_cols_12 = health_service_usage_cols_12
-        
-        # Initialize all custom transformers
-        self.temporal_features = TemporalFeatureEngineer(numerical_common_features, ordinal_mappings)
+        self.feature_names_in_ = None
+
+        # Initialize all custom transformers using the instance attributes
+        self.temporal_features = TemporalFeatureEngineer(self.numerical_common_features, self.ordinal_mappings)
         self.education_progression = EducationProgressionTransformer()
-        self.marital_transition = MaritalTransitionTransformer(married_cols_03, married_cols_12)
-        self.chronic_illness = ChronicIllnessTransformer(chronic_illness_cols_03, chronic_illness_cols_12)
-        self.adl_iadl = ADLIADLTransformer(adl_cols_03, adl_cols_12, iadl_cols_03, iadl_cols_12)
+        self.marital_transition = MaritalTransitionTransformer(self.married_cols_03, self.married_cols_12)
+        self.chronic_illness = ChronicIllnessTransformer(self.chronic_illness_cols_03, self.chronic_illness_cols_12)
+        self.adl_iadl = ADLIADLTransformer(self.adl_cols_03, self.adl_cols_12, self.iadl_cols_03, self.iadl_cols_12)
         self.health_assessment_change = HealthAssessmentChangeTransformer()
-        self.mood_score = MoodScoreTransformer(positive_mood_cols_03, positive_mood_cols_12, negative_mood_cols_03, negative_mood_cols_12)
+        self.mood_score = MoodScoreTransformer(self.positive_mood_cols_03, self.positive_mood_cols_12, self.negative_mood_cols_03, self.negative_mood_cols_12)
         self.consistent_exercise = ConsistentExerciseTransformer()
-        self.lifestyle_health_index = LifestyleHealthIndexTransformer(lifestyle_cols_03, lifestyle_cols_12)
-        self.socioeconomic_features = SocioeconomicFeaturesTransformer(income_cols_03, income_cols_12, insurance_cols_03, insurance_cols_12)
-        self.social_engagement = SocialEngagementTransformer(social_engagement_cols)
-        self.health_services = HealthServicesTransformer(preventive_care_cols_03, preventive_care_cols_12, health_service_usage_cols_03, health_service_usage_cols_12)
+        self.lifestyle_health_index = LifestyleHealthIndexTransformer(self.lifestyle_cols_03, self.lifestyle_cols_12)
+        self.socioeconomic_features = SocioeconomicFeaturesTransformer(self.income_cols_03, self.income_cols_12, self.insurance_cols_03, self.insurance_cols_12)
+        self.social_engagement = SocialEngagementTransformer(self.social_engagement_cols)
+        self.health_services = HealthServicesTransformer(self.preventive_care_cols_03, self.preventive_care_cols_12, self.health_service_usage_cols_03, self.health_service_usage_cols_12)
     
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
+        # Fit all transformers (if necessary)
+        self.temporal_features.fit(X, y)
+        self.education_progression.fit(X, y)
+        self.marital_transition.fit(X, y)
+        self.chronic_illness.fit(X, y)
+        self.adl_iadl.fit(X, y)
+        self.health_assessment_change.fit(X, y)
+        self.mood_score.fit(X, y)
+        self.consistent_exercise.fit(X, y)
+        self.lifestyle_health_index.fit(X, y)
+        self.socioeconomic_features.fit(X, y)
+        self.social_engagement.fit(X, y)
+        self.health_services.fit(X, y)
         return self
     
     def transform(self, X):
@@ -814,15 +899,39 @@ class CustomFeatureEngineer(BaseEstimator, TransformerMixin):
         X = self.social_engagement.transform(X)
         X = self.health_services.transform(X)
         return X
+
+    def get_feature_names_out(self, input_features=None):
+        # Aggregate feature names from all transformers
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = input_features
+
+        # Collect feature names from each transformer
+        transformers = [
+            self.temporal_features, self.education_progression, self.marital_transition,
+            self.chronic_illness, self.adl_iadl, self.health_assessment_change,
+            self.mood_score, self.consistent_exercise, self.lifestyle_health_index,
+            self.socioeconomic_features, self.social_engagement, self.health_services
+        ]
+
+        for transformer in transformers:
+            output_features = transformer.get_feature_names_out(output_features)
+
+        return output_features
+
     
 
 class InteractionTermsTransformer(BaseEstimator, TransformerMixin):
+    """
+    Transformer that creates interaction terms.
+    """
     def __init__(self):
-        pass
-    
+        self.feature_names_in_ = None
+
     def fit(self, X, y=None):
+        self.feature_names_in_ = X.columns
         return self
-    
+
     def transform(self, X):
         X = X.copy()
         
@@ -851,15 +960,32 @@ class InteractionTermsTransformer(BaseEstimator, TransformerMixin):
             )
         
         return X
-    
+
+    def get_feature_names_out(self, input_features=None):
+        # Return feature names including interaction terms
+        if input_features is None:
+            input_features = self.feature_names_in_
+        output_features = list(input_features)
+        interaction_features = [
+            'health_lifestyle_interaction', 'education_income_interaction',
+            'social_mood_interaction', 'preventive_chronic_interaction'
+        ]
+        output_features.extend(interaction_features)
+        return np.array(output_features)
+
 # SHAP-based feature selection as a custom transformer
 class SHAPFeatureSelector(BaseEstimator, TransformerMixin):
+    """
+    Transformer that selects top features based on SHAP values.
+    """
     def __init__(self, base_model, num_features):
         self.base_model = base_model
         self.num_features = num_features
         self.selected_features = None
+        self.feature_names_in_ = None
 
     def fit(self, X, y):
+        self.feature_names_in_ = X.columns
         # Train the base model for SHAP analysis
         self.base_model.fit(X, y)
         explainer = shap.TreeExplainer(self.base_model)
@@ -867,12 +993,55 @@ class SHAPFeatureSelector(BaseEstimator, TransformerMixin):
         # Calculate mean absolute SHAP values for feature importance
         feature_importances = np.abs(shap_values).mean(axis=0)
         # Select top features
-        self.selected_features = np.argsort(feature_importances)[-self.num_features:]
+        top_indices = np.argsort(feature_importances)[-self.num_features:]
+        self.selected_features = X.columns[top_indices]
         return self
 
     def transform(self, X):
-    #    Return only the selected features
-        return X[:, self.selected_features]
+        # Return only the selected features
+        return X[self.selected_features]
+
+    def get_feature_names_out(self, input_features=None):
+        # Return the names of the selected features
+        return self.selected_features
 
 
+# Ordinal Mapper Transformer
+class OrdinalMapper(BaseEstimator, TransformerMixin):
+    def __init__(self, ordinal_cols, ordinal_mappings):
+        self.ordinal_cols = ordinal_cols
+        self.ordinal_mappings = ordinal_mappings
+        self.feature_names_in_ = None
 
+    def fit(self, X, y=None):
+        # Store the feature names for later use
+        self.feature_names_in_ = X.columns
+        return self
+
+    def transform(self, X):
+        X = X.copy()
+        for col in self.ordinal_cols:
+            if col in X.columns:
+                mapping = self.ordinal_mappings.get(col, {})
+                X[col] = X[col].map(mapping)
+        return X
+
+    def get_feature_names_out(self, input_features=None):
+        # Return the feature names after transformation
+        if input_features is None:
+            return self.feature_names_in_
+        else:
+            return input_features
+
+class CustomPipeline(Pipeline):
+    def get_feature_names_out(self, input_features=None):
+        features = input_features
+        for name, transform in self.steps:
+            if hasattr(transform, 'get_feature_names_out'):
+                if features is None:
+                    features = transform.get_feature_names_out()
+                else:
+                    features = transform.get_feature_names_out(features)
+            else:
+                pass  # Transformer does not support get_feature_names_out
+        return features

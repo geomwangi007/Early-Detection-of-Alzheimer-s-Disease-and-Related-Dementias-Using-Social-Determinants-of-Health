@@ -4,7 +4,7 @@ import numpy as np
 import joblib
 import shap
 import matplotlib.pyplot as plt
-from custom_transformers import TemporalFeatureEngineer, EducationProgressionTransformer, MaritalTransitionTransformer, ChronicIllnessTransformer, ADLIADLTransformer, HealthAssessmentChangeTransformer, MoodScoreTransformer, ConsistentExerciseTransformer, LifestyleHealthIndexTransformer, SocioeconomicFeaturesTransformer, SocialEngagementTransformer, HealthServicesTransformer, CustomFeatureEngineer, InteractionTermsTransformer, SHAPFeatureSelector
+from custom_transformers import TemporalFeatureEngineer, EducationProgressionTransformer, MaritalTransitionTransformer, ChronicIllnessTransformer, ADLIADLTransformer, HealthAssessmentChangeTransformer, MoodScoreTransformer, ConsistentExerciseTransformer, LifestyleHealthIndexTransformer, SocioeconomicFeaturesTransformer, SocialEngagementTransformer, HealthServicesTransformer, CustomFeatureEngineer, InteractionTermsTransformer, SHAPFeatureSelector, OrdinalMapper
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
 
@@ -131,78 +131,7 @@ if submission_file is not None and features_file is not None:
         st.markdown("#### Distribution of Predicted Scores")
         st.bar_chart(test_data["composite_score"].value_counts().sort_index())
 
-        # **Model Interpretability Section**
-        st.markdown("### Model Interpretability with SHAP")
-
-        # Select a sample for SHAP analysis
-        sample_size = min(100, X_test.shape[0])  # Limit to 100 samples for performance
-        X_shap = X_test.head(sample_size)
-        test_data_shap = test_data.head(sample_size)
-
-        # Get feature names after preprocessing
-        preprocessor = model.named_steps['preprocessor']
-        feature_names = preprocessor.named_steps['preprocessing'].get_feature_names_out()
-
-        # Prepare data for SHAP
-        X_preprocessed = preprocessor.transform(X_shap)
-
-        # Convert to dense array if necessary
-        if not isinstance(X_preprocessed, np.ndarray):
-            X_preprocessed = X_preprocessed.toarray()
-
-        # Get the model (assuming the last step is named 'model')
-        model = model.named_steps['model']
-
-        # Base models in the stacking regressor
-        base_models = model.estimators_
-
-        # Define the base models to interpret
-        models_to_interpret = ['xgb', 'gbr', 'lightgbm']
-
-        # Map model names to their estimators
-        base_model_dict = dict(base_models)
-
-        for name in models_to_interpret:
-            if name in base_model_dict:
-                base_model = base_model_dict[name]
-                st.write(f"Interpreting base model: {name}")
-                try:
-                    # For tree-based models, use TreeExplainer
-                    # Create a SHAP explainer
-                    explainer = shap.TreeExplainer(base_model)
-                    shap_values = explainer.shap_values(X_preprocessed)
-
-                    # SHAP summary plot
-                    st.markdown(f"#### SHAP Summary Plot for {name}")
-                    fig_summary, ax_summary = plt.subplots()
-                    shap.summary_plot(shap_values, X_preprocessed, feature_names=feature_names, show=False)
-                    st.pyplot(fig_summary)
-
-                    # SHAP feature importance plot
-                    st.markdown(f"#### SHAP Feature Importance for {name}")
-                    fig_importance, ax_importance = plt.subplots()
-                    shap.summary_plot(shap_values, X_preprocessed, feature_names=feature_names, plot_type='bar', show=False)
-                    st.pyplot(fig_importance)
-
-                    # Option to select a sample for detailed SHAP analysis
-                    sample_index = st.number_input(f"Select a sample index for detailed SHAP analysis for {name}:", min_value=0, max_value=sample_size-1, value=0, step=1, key=f"sample_index_{name}")
-                    st.write("Selected sample features:")
-                    st.write(test_data_shap.iloc[sample_index])
-
-                    # SHAP force plot for the selected sample
-                    st.markdown(f"#### SHAP Force Plot for Selected Sample in {name}")
-                    shap.initjs()
-                    shap_value = shap_values[sample_index]
-                    # Ensure shap_value is 1D array for regression
-                    if isinstance(shap_value, list):
-                        shap_value = shap_value[0]
-                    fig_force = shap.force_plot(explainer.expected_value, shap_value, X_preprocessed[sample_index], feature_names=feature_names, matplotlib=True)
-                    st.pyplot(fig_force)
-
-                except Exception as e:
-                    st.warning(f"Could not interpret model {name}: {e}")
-            else:
-                st.warning(f"Model {name} not found in the stacking regressor.")
+        
 
     except Exception as e:
         st.error(f"🚨 An error occurred: {e}")

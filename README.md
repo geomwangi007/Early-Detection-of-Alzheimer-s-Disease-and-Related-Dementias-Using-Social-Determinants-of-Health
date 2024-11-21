@@ -108,38 +108,63 @@ The Exploratory Data Analysis (EDA) focuses on understanding key features within
 
 This EDA offers valuable insights into the dataset, identifying key factors that may influence cognitive health and early detection of Alzheimer’s Disease and related dementias.
 
-![countplot1](https://github.com/user-attachments/assets/a18bb8f6-3cbf-46fe-aeab-422f26644c99)
+![cognitive score by preventive care index](https://github.com/user-attachments/assets/a7c1e3eb-804e-4ad7-a5f3-d7b76e005c3b)
+
+Illustrates the effect of preventive care index, which is a sum of respondents hospital trips to screen for chronic conditions such as diabetes and hypertension, or get vaccines, get dental checkups etc.
+
+Higher preventive care participation is linked to better cognitive scoes,supporting the recommendation to enhance preventive healthcare access.
+
+![cognitive score by education](https://github.com/user-attachments/assets/18609036-ddde-42b8-81a6-e3a03523ec89)
+
+Illustrates how education level correlates with cognitive function
+
+Higher education levels are associated with higher cognitive score, supporting the recommendation to promote education initiatives
+
+![cognitive score by household income](https://github.com/user-attachments/assets/afc7e6e9-fc4e-4b15-824f-5000fb748479)
+
+Reduced flactuations in household income are associated with higher cognitive score, supporting the recommendation to promote financial well-being initiatives to promote long-term outcomes
+
+![cognitive score by parental education](https://github.com/user-attachments/assets/9e318d47-9b56-4311-8c79-907db6eece31)
+
+Higher education levels in parents are associated with higher cognitive score in their children since they are able to engage the children in stimulating activities 
+
+![cognitive score by physical limitations](https://github.com/user-attachments/assets/261a8977-7708-4075-bc57-50c79f429e57)
+
+Decline in physical activities are associsted with decline in cogniive scores
+![cognitive score by social engagement](https://github.com/user-attachments/assets/3b8a7526-b7e7-4883-b419-35c4848f8475)
+
+Active social life contributes positively to the cognitive scores
+
+![image](https://github.com/user-attachments/assets/dc9c18d0-538b-405c-94a6-16e7875a2477)
+
 
 The dataset reveals that most individuals fall within the 60–69 age group, followed by the 50–59 group, with fewer in the 70–79 range and the smallest number being those under 49. The majority are married or in a civil union, with "Widowed" being the most common among other marital statuses. There is a near-even split between rural and urban residents, though urban areas slightly outnumber rural ones. Education levels show that most individuals have 1–5 years of education, with fewer having no education or more than 10 years. The majority have 3 or 4 living children, with a small proportion having none. Regarding spouse gender, the distribution is nearly equal, with a slight majority of women.
 
-![countplot2](https://github.com/user-attachments/assets/72930681-1438-4fda-b945-ef274fc68db7)
+
 
 
 The dataset shows that most individuals rate their health as "Fair," followed by "Good," with fewer rating their health as "Poor," "Very Good," or "Excellent." Most individuals report no limitations in Activities of Daily Living (ADLs) or Instrumental Activities of Daily Living (IADLs), with only a small number reporting one or more limitations. Depressive symptoms are generally low, with most individuals reporting between 0 to 2 symptoms. A majority have health insurance coverage, and more individuals have received a flu vaccination than those who have not. Exercise frequency is fairly balanced, with a slightly larger portion not exercising three or more times per week. Most individuals do not use tobacco, with a smaller group indicating tobacco use.
 
-![Histplot1](https://github.com/user-attachments/assets/176d763f-6623-47c2-89f3-e4fd6400c56c)
+![image](https://github.com/user-attachments/assets/7353e33c-f030-4de2-99e3-4af3ff2856a7)
 
 The distribution of the composite score, which aggregates various health and lifestyle domains. Analyzing this score can reveal patterns or trends in overall health across the population in your dataset.
 
-![barplot1](https://github.com/user-attachments/assets/f909f000-1fb9-42b4-84bd-7b1b6a40d3ba)
 
 ![lineplot1](https://github.com/user-attachments/assets/9c4a00ec-108e-4848-97d9-7d647bc1128f)
 
 The graph shows a trend of the "Average Composite Score" over the years, with a noticeable decline from 2016 to 2021. The graph shows a consistent downward trend from 2016 to 2021. The average composite score decreased from above 160 in 2016 to around 155 in 2021, indicating a noticeable decline over these five years. The decline appears linear, with no major fluctuations or reversals in the trend, suggesting that this decrease might be a result of systemic or gradual changes rather than sudden or isolated events.
 
-![stacked1](https://github.com/user-attachments/assets/57640427-57b7-40e8-aaff-9c042d75c5d8)
 
 - **Health Insurance by Marital Status**:
   - Most individuals who are "Married or in civil union" have health insurance, with a smaller proportion lacking coverage.
   - Among "Widowed" individuals, many have insurance, though the uninsured proportion is higher compared to married individuals.
   - "Separated or divorced" and "Single" individuals have lower overall counts, with insurance coverage less common in these groups compared to married individuals.
-    
-![outliers boxplot1](https://github.com/user-attachments/assets/874614fe-5ffd-453b-a599-2e8117fc2664)
-![outliers boxplot2](https://github.com/user-attachments/assets/85a1a1dd-b92b-427b-9715-3059f636c868)
 
+![image](https://github.com/user-attachments/assets/440d49c9-7f87-4932-b856-e3e486d53010)
+
+    
 The analysis reveals a positive correlation between education level and composite scores, with higher education generally leading to better performance. Individuals with no education have the lowest median scores and high variability, while those with 1-5 years of education show slightly improved but still low scores. Median scores increase significantly at 6 and 7-9 years of education, with the highest scores observed in the 10+ years category, accompanied by a broader range and notable outliers. These outliers, particularly in higher education groups, highlight variability influenced by individual factors such as socio-economic background or quality of education, suggesting that while education is a strong predictor of performance, it is not the sole determinant.
 
-![pairplot1](https://github.com/user-attachments/assets/cca33c99-8f90-41d0-a797-faf692611229)
 
 ### Insights from Histograms and Scatter Plot Relationships
 
@@ -163,29 +188,18 @@ The analysis reveals a positive correlation between education level and composit
 ## Modelling and Evaluation  
 
 ## Model Performance Overview  
-- **Best Model**: Random Forest with RMSE of **37.8982**, indicating strong predictive performance.  
-- **Linear Regression**: RMSE of **41.5095**, showing potential for improvement.  
-- **Feature Selection**: Reduced RMSE to **37.4956**, improving model focus and performance.  
+The modeling approach will focus on predictive machine learning techniques tailored to the structure and goals of the dataset:
 
-## Key Insights  
-1. **Hyperparameter Tuning**:  
-   - Limited improvement with tuned Random Forest RMSE slightly higher than the baseline (**37.8070** vs. **37.8982**).  
-   - Indicates default parameters suit this dataset better.  
+1.	Techniques: Models like Linear Regression and ensemble Learning.
+2.	 Target Variable: The primary outcome is the cognitive health score, which is assessed over time and categorized into early risk stages of AD/ADRD.
+3.	Feature Engineering: Temporal changes, education progression, and health metrics will be key predictors.
+4.	Model Selection: A baseline logistic regression will evaluate the dataset's predictability. Subsequent models will include feature selection and hyperparameter tuning.
+5.	Validation: K-fold cross-validation ensures robust results. Metrics like accuracy, precision, recall, F1-score, and ROC-AUC will measure success.
 
-2. **Feature Selection**:  
-   - Enhanced performance by prioritizing relevant features.  
-   - R² increased to **0.5966**, explaining ~60% of variance.  
-
-3. **Dimensionality Reduction (PCA)**:  
-   - Decreased model performance (RMSE **48.99**, R² **0.3113**).  
-   - Likely due to loss of key features or introduction of noise.  
-
-## Linear Regression Enhancements  
-- **Polynomial Features**:  
-  - Reduced RMSE to **37.5991** with R² = **0.6137**.  
-- **Ridge Regression**:  
-  - Optimized alpha achieved RMSE of **22.4754** and R² of **0.861**.  
-  - Explained ~86% of variance with low prediction error.  
+The Best Model was: The stacked model
+RMSE:39.55
+R² :58
+  
 
 ## Feature Importance Analysis  
 - **Key Predictors**:  
